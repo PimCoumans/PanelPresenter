@@ -53,7 +53,7 @@ public class PanelPresenter: NSObject {
 	}()
 	
 	/// View to disply shadow right below headerContentView
-	private(set) lazy var headerShadowView: UIView = {
+	public private(set) lazy var headerShadowView: UIView = {
 		let view = PanelHeaderShadowView()
 		view.isUserInteractionEnabled = false
 		view.translatesAutoresizingMaskIntoConstraints = false
@@ -63,7 +63,7 @@ public class PanelPresenter: NSObject {
 	}()
 	
 	/// View used behind content and header
-	private(set) lazy var backgroundView: UIView = {
+	public private(set) lazy var backgroundView: UIView = {
 		let view = PanelBackgroundView(effect: backgroundViewEffect)
 		
 		let cornerRadius = headerViewHeight / 2
