@@ -43,7 +43,7 @@ public class PanelPresenter: NSObject {
 	}
 	
 	/// Default scrollView used to display contents
-	private(set) lazy var panelScrollView: PanelScrollView = {
+	public private(set) lazy var panelScrollView: PanelScrollView = {
 		let scrollView = PanelScrollView()
 		scrollView.alwaysBounceVertical = true
 		scrollView.canCancelContentTouches = true
@@ -52,7 +52,30 @@ public class PanelPresenter: NSObject {
 		return scrollView
 	}()
 	
-	/// Immediatley updates panel height when content has changed. When `animated` is set to `true`, this just wraps ``layoutIfNeeded()`` in a spring-based animation.
+	/// View to disply shadow right below headerContentView
+	private(set) lazy var headerShadowView: UIView = {
+		let view = PanelHeaderShadowView()
+		view.isUserInteractionEnabled = false
+		view.translatesAutoresizingMaskIntoConstraints = false
+		view.backgroundColor = .black.withAlphaComponent(headerShadowOpactity)
+		view.alpha = 0
+		return view
+	}()
+	
+	/// View used behind content and header
+	private(set) lazy var backgroundView: UIView = {
+		let view = PanelBackgroundView(effect: backgroundViewEffect)
+		
+		let cornerRadius = headerViewHeight / 2
+		view.layer.cornerRadius = cornerRadius
+		view.layer.cornerCurve = .continuous
+		view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+		view.layer.masksToBounds = true
+		view.contentMode = .redraw
+		return view
+	}()
+	
+	/// Immediately updates panel height when content has changed. When `animated` is set to `true`, this just wraps ``layoutIfNeeded()`` in a spring-based animation.
 	/// - Parameter animated: Wether the height change should be animated
 	public func updatePanelHeight(animated: Bool = true) {
 		if animated {
@@ -152,27 +175,6 @@ public class PanelPresenter: NSObject {
 		view.insetsLayoutMarginsFromSafeArea = false
 		view.directionalLayoutMargins.leading = headerViewHeight * 0.4
 		view.directionalLayoutMargins.trailing = headerViewHeight * 0.4
-		return view
-	}()
-	
-	private(set) lazy var headerShadowView: UIView = {
-		let view = PanelHeaderShadowView()
-		view.isUserInteractionEnabled = false
-		view.translatesAutoresizingMaskIntoConstraints = false
-		view.backgroundColor = .black.withAlphaComponent(headerShadowOpactity)
-		view.alpha = 0
-		return view
-	}()
-	
-	private(set) lazy var backgroundView: UIView = {
-		let view = PanelBackgroundView(effect: backgroundViewEffect)
-		
-		let cornerRadius = headerViewHeight / 2
-		view.layer.cornerRadius = cornerRadius
-		view.layer.cornerCurve = .continuous
-		view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-		view.layer.masksToBounds = true
-		view.contentMode = .redraw
 		return view
 	}()
 }
