@@ -1,6 +1,6 @@
 import UIKit
 
-extension UIScrollView {
+public extension UIScrollView {
 	
 	/// Adds adjustedContentInset to offset so offset aligns with actual scrollable area
 	var relativeContentOffset: CGPoint {
@@ -33,7 +33,7 @@ extension UIScrollView {
 	}
 }
 
-extension UIScrollView {
+public extension UIScrollView {
 	/// Immediately halts scrolling and clamps offset to scrollable bounds
 	/// - Returns: Relative change in vertical offset after clamping
 	@discardableResult
