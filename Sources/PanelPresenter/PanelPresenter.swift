@@ -18,11 +18,17 @@ public class PanelPresenter: NSObject {
 		headerShadowView.backgroundColor = UIColor(white: 0, alpha: headerShadowOpacity)
 	}}
 	
+	/// Wether to apply bottom insets to the scrollView based on the height of the keyboard frame
+	public var insetsWithKeyboardFrame: Bool = false { didSet {
+		updateScrollView(scrollView)
+	}}
+	
 	/// View to add views to that should appear above the scrollView
 	public var headerContentView: UIView {
 		headerView
 	}
 	
+	/// Effect used for the background view
 	let backgroundViewEffect: UIVisualEffect?
 	
 	public init(backgroundViewEffect: UIVisualEffect? = UIBlurEffect(style: .regular)) {
@@ -44,6 +50,12 @@ public class PanelPresenter: NSObject {
 		scrollViewObserver.didUpdate = { [weak self] scrollView in
 			self?.updateScrollView(scrollView)
 		}
+		keyboardFrameObserver = NotificationCenter.default.addObserver(forName: UIView.keyboardWillChangeFrameNotification, object: nil, queue: nil, using: { [weak self] notification in
+			guard let frame = notification.userInfo?[UIView.keyboardFrameEndUserInfoKey] as? CGRect else {
+				return
+			}
+			self?.updateKeyboardInsets(withKeyboardFrame: frame)
+		})
 	}
 	
 	/// Default scrollView used to display contents
@@ -61,7 +73,7 @@ public class PanelPresenter: NSObject {
 		let view = PanelHeaderShadowView()
 		view.isUserInteractionEnabled = false
 		view.translatesAutoresizingMaskIntoConstraints = false
-		view.backgroundColor = .black.withAlphaComponent(headerShadowOpactity)
+		view.backgroundColor = .black.withAlphaComponent(headerShadowOpacity)
 		view.alpha = 0
 		return view
 	}()
@@ -121,8 +133,12 @@ public class PanelPresenter: NSObject {
 	/// multiplier to use for transform when bouncing back after pulling down
 	private var bounceBackScrollViewMultiplier: CGFloat?
 	
+	private var scrollViewBottomInset: CGFloat?
+	
 	private var viewObserver: NSKeyValueObservation?
 	private var scrollViewObserver = ScrollViewObserver()
+	private var keyboardFrameObserver: AnyObject?
+	
 	private var panelPresentable: PanelPresentable? {
 		viewController as? PanelPresentable
 	}
@@ -181,6 +197,12 @@ public class PanelPresenter: NSObject {
 		view.directionalLayoutMargins.trailing = headerViewHeight * 0.4
 		return view
 	}()
+	
+	deinit {
+		if let observer = keyboardFrameObserver {
+			NotificationCenter.default.removeObserver(observer)
+		}
+	}
 }
 
 // MARK: Custom class names (mostly for view inspection)
@@ -340,11 +362,29 @@ private extension PanelPresenter {
 // MARK: - UIScrollView handling
 private extension PanelPresenter {
 	
+	private func updateKeyboardInsets(withKeyboardFrame keyboardFrame: CGRect) {
+		if let overlap = scrollView.window?
+			.convert(keyboardFrame, to: containerView)
+			.intersection(containerView.bounds),
+		   !overlap.isNull, !overlap.isEmpty {
+			scrollViewBottomInset = overlap.height
+		} else {
+			scrollViewBottomInset = nil
+		}
+		updateScrollView(scrollView)
+		updatePanelHeight()
+	}
+	
 	/// Called whenever any layout properties of `scrollView` changes
 	func updateScrollView(_ scrollView: UIScrollView) {
 		// ScrollView‘s bottom extends by `bottomBounceAllowance`
-		scrollView.contentInset.bottom = bottomBounceAllowance
-		let scrollViewHeight = scrollView.frame.inset(by: scrollView.safeAreaInsets).height - bottomBounceAllowance
+		var bottomInset = bottomBounceAllowance
+		if insetsWithKeyboardFrame, let scrollViewBottomInset {
+			// And the keyboard frame if necessary
+			bottomInset += scrollViewBottomInset - scrollView.safeAreaInsets.bottom
+		}
+		scrollView.contentInset.bottom = bottomInset
+		let scrollViewHeight = scrollView.frame.inset(by: scrollView.safeAreaInsets).height - bottomInset
 		let contentHeight = scrollView.contentSize.height
 		// Set top inset so content is always aligned to bottom
 		scrollView.contentInset.top = max(0, scrollViewHeight - contentHeight)
