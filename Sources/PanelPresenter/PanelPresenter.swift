@@ -3,18 +3,22 @@ import ConstraintBuilder
 
 public class PanelPresenter: NSObject {
 	
+	/// Set the view controller to apply panel behavior to
 	public weak var viewController: UIViewController? { didSet {
 		setupViewController()
 	}}
 	
+	/// Opactiy of the dimming view behind the panel
 	public var dimOpactity: CGFloat = 0.45 { didSet {
 		dimmingView.backgroundColor = UIColor(white: 0, alpha: dimOpactity)
 	}}
 	
-	public var headerShadowOpactity: CGFloat = 0.15 { didSet {
-		headerShadowView.backgroundColor = UIColor(white: 0, alpha: headerShadowOpactity)
+	/// Opactiy of the shadow below the header
+	public var headerShadowOpacity: CGFloat = 0.15 { didSet {
+		headerShadowView.backgroundColor = UIColor(white: 0, alpha: headerShadowOpacity)
 	}}
 	
+	/// View to add views to that should appear above the scrollView
 	public var headerContentView: UIView {
 		headerView
 	}
@@ -112,7 +116,7 @@ public class PanelPresenter: NSObject {
 	private let headerShadowHeight: CGFloat = 2
 	/// Extend scrollView height allowing for views bouncing up
 	private let bottomBounceAllowance: CGFloat = 100
-	/// Inset
+	/// Vertical position of panel background
 	private var backgroundTopConstraint: NSLayoutConstraint?
 	/// multiplier to use for transform when bouncing back after pulling down
 	private var bounceBackScrollViewMultiplier: CGFloat?
