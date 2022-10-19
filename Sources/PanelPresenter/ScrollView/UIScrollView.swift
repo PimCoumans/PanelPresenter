@@ -4,10 +4,18 @@ public extension UIScrollView {
 	
 	/// Adds adjustedContentInset to offset so offset aligns with actual scrollable area
 	var relativeContentOffset: CGPoint {
-		CGPoint(
-			x: contentOffset.x + adjustedContentInset.left,
-			y: contentOffset.y + adjustedContentInset.top
-		)
+		get {
+			CGPoint(
+				x: contentOffset.x + adjustedContentInset.left,
+				y: contentOffset.y + adjustedContentInset.top
+			)
+		}
+		set {
+			contentOffset = CGPoint(
+				x: newValue.x - adjustedContentInset.left,
+				y: newValue.y - adjustedContentInset.top
+			)
+		}
 	}
 	
 	private var pointPrecision: CGFloat { 1 / UIScreen.main.scale }
