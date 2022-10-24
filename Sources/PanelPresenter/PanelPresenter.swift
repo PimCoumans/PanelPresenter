@@ -159,6 +159,10 @@ public class PanelPresenter: NSObject {
 		panelPresentable?.panelCanBeDismissed ?? true
 	}
 	
+	private var extendsToFullHeight: Bool {
+		panelPresentable?.panelExtendsToFullHeight ?? false
+	}
+	
 	private var shouldAdjustPresenterTintMode: Bool {
 		panelPresentable?.shouldAdjustPresenterTintMode ?? true
 	}
@@ -178,6 +182,7 @@ public class PanelPresenter: NSObject {
 	private lazy var containerView: UIView = {
 		let view = PanelContainerView()
 		view.insetsLayoutMarginsFromSafeArea = false
+		view.directionalLayoutMargins = .zero
 		return view
 	}()
 	
@@ -255,7 +260,7 @@ private extension PanelPresenter {
 		if let viewController = panelPresentable {
 			panelTopInset = viewController.panelTopInset
 		}
-		containerView.layoutMargins.top = headerViewHeight + panelTopInset
+		containerView.directionalLayoutMargins.top = headerViewHeight + panelTopInset
 		if isScrollViewCustom {
 			panelScrollView.removeFromSuperview()
 			prepareCustomScrollView(scrollView)
@@ -283,7 +288,7 @@ private extension PanelPresenter {
 private extension PanelPresenter {
 	
 	func setupViews() {
-		containerView.layoutMargins.top = headerViewHeight + panelTopInset
+		containerView.directionalLayoutMargins.top = headerViewHeight + panelTopInset
 		
 		scrollView.addSubview(scrollContentView)
 		
@@ -389,7 +394,7 @@ private extension PanelPresenter {
 		}
 		scrollView.contentInset.bottom = bottomInset
 		let scrollViewHeight = scrollView.frame.inset(by: scrollView.safeAreaInsets).height - bottomInset
-		let contentHeight = scrollView.contentSize.height
+		let contentHeight = extendsToFullHeight ? scrollViewHeight : scrollView.contentSize.height
 		// Set top inset so content is always aligned to bottom
 		scrollView.contentInset.top = max(0, scrollViewHeight - contentHeight)
 		
@@ -647,7 +652,8 @@ extension PanelPresenter: UIViewControllerAnimatedTransitioning {
 		}
 		
 		let visibleContainerViewFrame = containerView.bounds.inset(by: containerView.layoutMargins)
-		let fullOffset = min(visibleContainerViewFrame.height, scrollView.contentSize.height + headerViewHeight) + containerView.safeAreaInsets.bottom
+		let contentHeight = extendsToFullHeight ? scrollView.frame.height : scrollView.contentSize.height
+		let fullOffset = min(visibleContainerViewFrame.height, contentHeight + headerViewHeight) + headerViewHeight
 		let fullDuration = transitionDuration(using: context)
 		let duration = max(0.15, fullDuration * ((fullOffset / containerView.bounds.height) * 0.75))
 		
