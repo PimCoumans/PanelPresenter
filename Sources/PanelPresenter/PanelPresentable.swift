@@ -36,18 +36,24 @@ public protocol PanelPresentable: UIViewController {
 	/// Set an additional top inset from the screen‘s top
 	var panelTopInset: CGFloat { get }
 	
+	/// Whether the view controller allows the panel to be dismissed, return `false` to (temporarily) disable panel dismissing
+	var panelCanBeDismissed: Bool { get }
+	
+	/// Whether the presenting view controller's view should
 	var shouldAdjustPresenterTintMode: Bool { get }
 }
 
 extension PanelPresentable {
 	public var panelScrollView: UIScrollView { panelPresenter.panelScrollView }
 	public var panelTopInset: CGFloat { 10 }
+	public var panelCanBeDismissed: Bool { true }
 	public var shouldAdjustPresenterTintMode: Bool { true }
 	
 	public var headerContentView: UIView { panelPresenter.headerContentView }
 }
 
 public extension UIViewController {
+	/// The panel presenter that presented this view controller, nil if not presented by panel presenter
 	var presentingPanelPresenter: PanelPresenter? {
 		transitioningDelegate as? PanelPresenter
 	}

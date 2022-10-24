@@ -8,17 +8,17 @@ public class PanelPresenter: NSObject {
 		setupViewController()
 	}}
 	
-	/// Opactiy of the dimming view behind the panel
-	public var dimOpactity: CGFloat = 0.45 { didSet {
-		dimmingView.backgroundColor = UIColor(white: 0, alpha: dimOpactity)
+	/// Opacity of the dimming view behind the panel
+	public var dimOpacity: CGFloat = 0.45 { didSet {
+		dimmingView.backgroundColor = UIColor(white: 0, alpha: dimOpacity)
 	}}
 	
-	/// Opactiy of the shadow below the header
+	/// Opacity of the shadow below the header
 	public var headerShadowOpacity: CGFloat = 0.15 { didSet {
 		headerShadowView.backgroundColor = UIColor(white: 0, alpha: headerShadowOpacity)
 	}}
 	
-	/// Wether to apply bottom insets to the scrollView based on the height of the keyboard frame
+	/// Whether to apply bottom insets to the scrollView based on the height of the keyboard frame
 	public var insetsWithKeyboardFrame: Bool = false { didSet {
 		updateScrollView(scrollView)
 	}}
@@ -68,7 +68,7 @@ public class PanelPresenter: NSObject {
 		return scrollView
 	}()
 	
-	/// View to disply shadow right below headerContentView
+	/// View to display shadow right below headerContentView
 	public private(set) lazy var headerShadowView: UIView = {
 		let view = PanelHeaderShadowView()
 		view.isUserInteractionEnabled = false
@@ -92,7 +92,7 @@ public class PanelPresenter: NSObject {
 	}()
 	
 	/// Immediately updates panel height when content has changed. When `animated` is set to `true`, this just wraps ``layoutIfNeeded()`` in a spring-based animation.
-	/// - Parameter animated: Wether the height change should be animated
+	/// - Parameter animated: Whether the height change should be animated
 	public func updatePanelHeight(animated: Bool = true) {
 		if animated {
 			UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.86, initialSpringVelocity: 0, options: .allowUserInteraction) {
@@ -111,7 +111,7 @@ public class PanelPresenter: NSObject {
 	
 	/// Presents attached view controller
 	/// - Parameter presentingViewController: View controller to present from
-	/// This method is provided as a convenience to present from an externally created `PanelPresenter` (instead of the presented view controller comforming to ``PanelPresentable``.
+	/// This method is provided as a convenience to present from an externally created `PanelPresenter` (instead of the presented view controller conforming to ``PanelPresentable``.
 	/// Because until the view controller is presented, nothing is retaining the instance of `PanelPresenter`.
 	public func present(from presentingViewController: UIViewController) {
 		guard let viewController = viewController else {
@@ -155,6 +155,10 @@ public class PanelPresenter: NSObject {
 	private var dismissGestureVelocity: CGFloat = 0
 	private var presenterTintAdjustmentMode: UIView.TintAdjustmentMode = .automatic
 	
+	private var canDismissPanel: Bool {
+		panelPresentable?.panelCanBeDismissed ?? true
+	}
+	
 	private var shouldAdjustPresenterTintMode: Bool {
 		panelPresentable?.shouldAdjustPresenterTintMode ?? true
 	}
@@ -172,7 +176,7 @@ public class PanelPresenter: NSObject {
 	}()
 	
 	private lazy var containerView: UIView = {
-		let view = PanelContrainerView()
+		let view = PanelContainerView()
 		view.insetsLayoutMarginsFromSafeArea = false
 		return view
 	}()
@@ -185,7 +189,7 @@ public class PanelPresenter: NSObject {
 	
 	private lazy var dimmingView: UIView = {
 		let view = PanelDimmingView()
-		view.backgroundColor = .black.withAlphaComponent(dimOpactity)
+		view.backgroundColor = .black.withAlphaComponent(dimOpacity)
 		return view
 	}()
 	
@@ -207,7 +211,7 @@ public class PanelPresenter: NSObject {
 
 // MARK: Custom class names (mostly for view inspection)
 extension PanelPresenter {
-	private class PanelContrainerView: UIView { }
+	private class PanelContainerView: UIView { }
 	private class PanelDimmingView: UIView { }
 	private class PanelScrollContentView: UIView { }
 	private class PanelHeaderContentView: UIView { }
@@ -443,8 +447,8 @@ extension PanelPresenter: UIGestureRecognizerDelegate {
 		guard otherGestureRecognizer == scrollView.panGestureRecognizer else {
 			return false
 		}
-		if isGestureRecognizer(gestureRecognizer, inView: headerView) && scrollView.contentExeedsBounds {
-			// Draggin from headerView should not allow scrolling when content can actually scroll
+		if isGestureRecognizer(gestureRecognizer, inView: headerView) && scrollView.contentExceedsBounds {
+			// Dragging from headerView should not allow scrolling when content can actually scroll
 			// Disable `otherGestureRecognizer`, so header drag overrules scroll gesture
 			otherGestureRecognizer.isEnabled = false
 			otherGestureRecognizer.isEnabled = true
@@ -456,6 +460,10 @@ extension PanelPresenter: UIGestureRecognizerDelegate {
 	public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 		// Set initial state
 		startedGestureInHeaderView = false
+		
+		guard canDismissPanel else {
+			return false
+		}
 		
 		let isGestureInContent = isGestureRecognizerInScrollContent(gestureRecognizer)
 		let isGestureInHeaderView = isGestureRecognizer(gestureRecognizer, inView: headerView)
@@ -499,7 +507,7 @@ extension PanelPresenter: UIGestureRecognizerDelegate {
 		let endStates: [UIGestureRecognizer.State] = [.cancelled, .failed, .ended]
 		let recognizerEnded = endStates.contains(recognizer.state)
 		
-		let canDragWithScrollViewBounce = !scrollView.contentExeedsBounds || !startedGestureInHeaderView
+		let canDragWithScrollViewBounce = !scrollView.contentExceedsBounds || !startedGestureInHeaderView
 		
 		if recognizerEnded {
 			// How far scrollView is rubber-banding down
@@ -519,7 +527,7 @@ extension PanelPresenter: UIGestureRecognizerDelegate {
 				resetScrollViewBounce()
 				animateDismissal(velocity: velocity)
 			} else if currentViewTranslation != 0 {
-				guard scrollView.contentExeedsBounds else {
+				guard scrollView.contentExceedsBounds else {
 					// Bounce back along with scrollView (see `updateScrollView(_:)` for more)
 					bounceBackScrollViewMultiplier = currentViewTranslation / -scrollView.relativeContentOffset.y
 					return
@@ -527,11 +535,11 @@ extension PanelPresenter: UIGestureRecognizerDelegate {
 				
 				// Animate view bounce back when scrollView won‘t
 				let bounceBackLength = currentViewTranslation + scrollOvershoot
-				let bounceBackpringVelocity = -(velocity / bounceBackLength)
+				let bounceBackSpringVelocity = -(velocity / bounceBackLength)
 				resetScrollViewBounce()
 				UIView.animate(
 					withDuration: 0.6, delay: 0,
-					usingSpringWithDamping: 0.94, initialSpringVelocity: bounceBackpringVelocity,
+					usingSpringWithDamping: 0.94, initialSpringVelocity: bounceBackSpringVelocity,
 					options: [.beginFromCurrentState, .allowUserInteraction]
 				) {
 					self.translateViews(withOffset: nil)

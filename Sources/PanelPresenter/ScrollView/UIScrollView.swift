@@ -26,7 +26,7 @@ public extension UIScrollView {
 		return offset < 0 || abs(offset) < pointPrecision
 	}
 	
-	/// Wether given location is withing scrollView's content
+	/// Whether given location is within scrollView's content
 	func isPointInScrollContent(_ point: CGPoint) -> Bool {
 		guard self.point(inside: point, with: nil) else {
 			return false
@@ -35,7 +35,7 @@ public extension UIScrollView {
 	}
 	
 	/// If content should be able to scroll without bouncing
-	var contentExeedsBounds: Bool {
+	var contentExceedsBounds: Bool {
 		let viewHeight = bounds.inset(by: adjustedContentInset).height
 		return contentSize.height - viewHeight > pointPrecision
 	}

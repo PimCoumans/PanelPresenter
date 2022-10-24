@@ -9,7 +9,7 @@ public class PanelScrollView: UIScrollView {
 	public var canCancelControlContentTouches: Bool = true
 	
 	/// Cancels all touches, even when touch is in  a `UIControl`.
-	/// Set `alwaysCancelsContentTouches` to `false` to not use this behaviour
+	/// Set `alwaysCancelsContentTouches` to `false` to not use this behavior
 	public override func touchesShouldCancel(in view: UIView) -> Bool {
 		if canCancelContentTouches && canCancelControlContentTouches && view is UIControl {
 			return true
