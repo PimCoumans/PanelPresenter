@@ -656,7 +656,9 @@ extension PanelPresenter: UIViewControllerAnimatedTransitioning {
 			translateViews(withOffset: fullOffset)
 			
 			UIView.animate(withDuration: fullDuration * 0.35, delay: 0, options: [.curveEaseOut, .allowUserInteraction]) {
-				presenterView?.tintAdjustmentMode = .dimmed
+				if self.shouldAdjustPresenterTintMode {
+					presenterView?.tintAdjustmentMode = .dimmed
+				}
 				self.dimmingView.alpha = 1
 			}
 			
@@ -676,7 +678,9 @@ extension PanelPresenter: UIViewControllerAnimatedTransitioning {
 			let dismissDuration = min(duration, distanceToCover / dismissGestureVelocity)
 			
 			UIView.animate(withDuration: dismissDuration, delay: 0, options: options) {
-				presenterView?.tintAdjustmentMode = self.presenterTintAdjustmentMode
+				if self.shouldAdjustPresenterTintMode {
+					presenterView?.tintAdjustmentMode = self.presenterTintAdjustmentMode
+				}
 				self.dimmingView.alpha = 0
 				self.translateViews(withOffset: fullOffset)
 			} completion: { finished in
