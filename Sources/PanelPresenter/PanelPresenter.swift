@@ -20,6 +20,7 @@ public class PanelPresenter: NSObject {
 	
 	/// Whether to apply bottom insets to the scrollView based on the height of the keyboard frame
 	public var insetsWithKeyboardFrame: Bool = false { didSet {
+		guard viewController?.isViewLoaded == true else { return }
 		updateScrollView(scrollView)
 	}}
 	
@@ -381,7 +382,7 @@ private extension PanelPresenter {
 			scrollViewBottomInset = nil
 		}
 		updateScrollView(scrollView)
-		updatePanelHeight()
+		updatePanelHeight(animated: false)
 	}
 	
 	/// Called whenever any layout properties of `scrollView` changes
