@@ -21,7 +21,6 @@ class ResizingViewController: UIViewController, PanelPresentable {
 		let multilineLabel = UILabel()
 		multilineLabel.text = "To make use of the behavior that PanelPresenter provides, make sure your view controller conforms to PanelPresentable and set the presenter’s viewController property to self in your initializer. Doing this at a later stage will result in weird stuff.\nJust add your views to your view, which will be added to panelPresenter's scroll view. And any navigation-type views can be placed in the headerContentView which will be displayed above your content and will stick to the top of the screen when scrolling."
 		multilineLabel.numberOfLines = 0
-//		multilineLabel.backgroundColor = .white
 		multilineLabel.textColor = .label
 		multilineLabel.contentMode = .top
 		view.addSubview(multilineLabel)
@@ -31,34 +30,34 @@ class ResizingViewController: UIViewController, PanelPresentable {
 	}()
 	
 	let numberOfCells: Int
-    
+
 	init(cellCount: Int = 8) {
 		numberOfCells = cellCount
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: self.view.bounds, style: .plain)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+		super.init(nibName: nil, bundle: nil)
+	}
+
+	private lazy var tableView: UITableView = {
+		let tableView = UITableView(frame: self.view.bounds, style: .plain)
+		tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
 		tableView.delegate = self
-        tableView.dataSource = self
-        return tableView
-    }()
-    
-    private lazy var titleView: UILabel = {
-        let label = UILabel()
-        label.text = "Some TableView"
-        label.textColor = .label
-        label.font = .preferredFont(forTextStyle: .title2)
-        label.adjustsFontForContentSizeCategory = true
-        return label
-    }()
-    
+		tableView.dataSource = self
+		return tableView
+	}()
+
+	private lazy var titleView: UILabel = {
+		let label = UILabel()
+		label.text = "Some TableView"
+		label.textColor = .label
+		label.font = .preferredFont(forTextStyle: .title2)
+		label.adjustsFontForContentSizeCategory = true
+		return label
+	}()
+
 	private lazy var doneButton: UIButton = compatibleButton(title: "Done", selector: #selector(didPressDoneButton))
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
 
 	@objc func toggleView() {
 		showingTableView.toggle()
@@ -93,9 +92,9 @@ class ResizingViewController: UIViewController, PanelPresentable {
 			self.panelPresentationController?.setNeedsScrollViewUpdate()
 		}
 	}
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
 		
 		panelPresentationController?.showsHeader = true
 		let titleLabel = UILabel()
@@ -105,17 +104,17 @@ class ResizingViewController: UIViewController, PanelPresentable {
 		panelPresentationController?.headerView.addSubview(titleLabel)
 		titleLabel.extendToSuperviewLayoutMargins()
 
-        view.addSubview(tableView)
+		view.addSubview(tableView)
 		tableView.backgroundColor = .clear
-        tableView.extendToSuperview()
+		tableView.extendToSuperview()
 		panelPresentationController?.topInset = 20
-    }
+	}
 }
 
 extension ResizingViewController {
-    @objc func didPressDoneButton(button: UIButton) {
-        presentingViewController?.dismiss(animated: true)
-    }
+	@objc func didPressDoneButton(button: UIButton) {
+		presentingViewController?.dismiss(animated: true)
+	}
 }
 
 extension ResizingViewController: UITableViewDelegate {
@@ -126,17 +125,17 @@ extension ResizingViewController: UITableViewDelegate {
 }
 
 extension ResizingViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        numberOfCells
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        
-        cell.textLabel?.text = "Table Cell \(indexPath.row)"
-        cell.backgroundColor = .clear
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		numberOfCells
+	}
+
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+
+		cell.textLabel?.text = "Table Cell \(indexPath.row)"
+		cell.backgroundColor = .clear
 		cell.textLabel?.textColor = .label
-        
-        return cell
-    }
+
+		return cell
+	}
 }

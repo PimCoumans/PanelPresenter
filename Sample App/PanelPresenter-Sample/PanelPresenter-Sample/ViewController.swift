@@ -59,7 +59,6 @@ class ViewController: UIViewController {
 		case newSimple
 		case resizingView
 		case bigResizingView
-		case newSimpleNav
 	}
 	
 	let stackView = UIStackView()
@@ -110,12 +109,6 @@ class ViewController: UIViewController {
 			return
 		case .bigResizingView:
 			viewController = ResizingViewController(cellCount: 86)
-			let panelPresenter = PanelPresenter(viewController: viewController)
-			panelPresenter.viewController = viewController
-			panelPresenter.present(from: self)
-			return
-		case .newSimpleNav:
-			viewController = UINavigationController(rootViewController: NewSimpleViewController())
 			let panelPresenter = PanelPresenter(viewController: viewController)
 			panelPresenter.viewController = viewController
 			panelPresenter.present(from: self)
