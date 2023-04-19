@@ -9,7 +9,7 @@ Add swipe-dismiss logic to your view controller, supporting Auto Layout and dyna
 
 Add this package to your project by searching `https://github.com/PimCoumans/PanelPresenter`.
 
-To make use of the behavior that `PanelPresenter` provides, make sure your view controller conforms to `PanelPresentable` and set the presenter‘s `viewController` property to `self` in your initializer. Doing this at a later stage will result in weird stuff.
+To make use of the behavior that `PanelPresenter` provides, make sure your view controller conforms to `PanelPresentable` and set the presenter’s `viewController` property to `self` in your initializer. Doing this at a later stage will result in weird stuff.
 
 ```swift
 class SimpleViewController: UIViewController, PanelPresentable {

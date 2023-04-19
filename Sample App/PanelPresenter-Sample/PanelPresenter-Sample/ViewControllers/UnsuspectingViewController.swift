@@ -21,10 +21,6 @@ class UnsuspectingViewController: UIViewController {
 		return view
 	}()
 	
-	private lazy var cancelButton: UIButton = compatibleButton(title: "Cancel") { [unowned self] in
-		self.presentingViewController?.dismiss(animated: true)
-	}
-	
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
@@ -33,15 +29,7 @@ class UnsuspectingViewController: UIViewController {
 		super.viewDidLoad()
 		
 		view.addSubview(simpleView)
-		simpleView.extendToSuperview()
+		simpleView.extendToSuperviewSafeArea()
 		simpleView.heightAnchor.constraint(equalToConstant: 400).isActive = true
-		
-		if let headerContentView = presentingPanelPresenter?.headerContentView {
-			headerContentView.addSubview(cancelButton)
-			cancelButton.applyConstraints {
-				$0.leadingAnchor.constraint(equalTo: headerContentView.layoutMarginsGuide.leadingAnchor)
-				$0.centerYAnchor.constraint(equalTo: headerContentView.layoutMarginsGuide.centerYAnchor)
-			}
-		}
 	}
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3E03D91529CB5648004AA632 /* NewSimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E03D91429CB5648004AA632 /* NewSimpleViewController.swift */; };
+		3E15B84529E06D890064F009 /* ResizingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E15B84429E06D890064F009 /* ResizingViewController.swift */; };
 		3ECA324D28AFEEBE000C82F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECA324C28AFEEBE000C82F1 /* AppDelegate.swift */; };
 		3ECA324F28AFEEBE000C82F1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECA324E28AFEEBE000C82F1 /* SceneDelegate.swift */; };
 		3ECA325128AFEEBE000C82F1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECA325028AFEEBE000C82F1 /* ViewController.swift */; };
@@ -21,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3E03D91429CB5648004AA632 /* NewSimpleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSimpleViewController.swift; sourceTree = "<group>"; };
+		3E15B84429E06D890064F009 /* ResizingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizingViewController.swift; sourceTree = "<group>"; };
 		3ECA324928AFEEBE000C82F1 /* PanelPresenter-Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PanelPresenter-Sample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3ECA324C28AFEEBE000C82F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3ECA324E28AFEEBE000C82F1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -103,6 +107,8 @@
 				3ECA326728AFEFA6000C82F1 /* SimpleViewController.swift */,
 				3ECA326928AFEFA6000C82F1 /* StackViewController.swift */,
 				3ECA326628AFEFA6000C82F1 /* TableViewController.swift */,
+				3E15B84429E06D890064F009 /* ResizingViewController.swift */,
+				3E03D91429CB5648004AA632 /* NewSimpleViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -182,8 +188,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3ECA326B28AFEFA6000C82F1 /* SimpleViewController.swift in Sources */,
+				3E15B84529E06D890064F009 /* ResizingViewController.swift in Sources */,
 				3ECA325128AFEEBE000C82F1 /* ViewController.swift in Sources */,
 				3ECA326C28AFEFA6000C82F1 /* UnsuspectingViewController.swift in Sources */,
+				3E03D91529CB5648004AA632 /* NewSimpleViewController.swift in Sources */,
 				3ECA326D28AFEFA6000C82F1 /* StackViewController.swift in Sources */,
 				3ECA324D28AFEEBE000C82F1 /* AppDelegate.swift in Sources */,
 				3ECA324F28AFEEBE000C82F1 /* SceneDelegate.swift in Sources */,

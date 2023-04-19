@@ -1,6 +1,7 @@
 import UIKit
 
-/// Uses KVO to watch for `contentSize`, `frame` and `contentOffset` on the set ``scrollView``, so just a way to get scrollView updates without setting a delegate
+/// Uses KVO to watch for `contentSize`, `frame` and `contentOffset` on the set ``scrollView``,
+/// so just a way to get `UIScrollView` updates without setting a delegate
 class ScrollViewObserver {
 	var scrollView: UIScrollView? { didSet {
 		updateObservers()

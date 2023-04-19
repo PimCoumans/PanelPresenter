@@ -13,7 +13,7 @@ class TableViewController: UIViewController, PanelPresentable {
     
     let panelPresenter = PanelPresenter()
     
-    var panelScrollView: UIScrollView {
+    var panelScrollView: UIScrollView? {
         tableView
     }
 	
@@ -51,23 +51,26 @@ class TableViewController: UIViewController, PanelPresentable {
         super.viewDidLoad()
         view.addSubview(tableView)
         tableView.extendToSuperview()
-        
-        headerContentView.addSubview(titleView)
-        headerContentView.addSubview(doneButton)
+
+		guard let headerView = panelPresentationController?.headerView else {
+			return
+		}
+        headerView.addSubview(titleView)
+        headerView.addSubview(doneButton)
         doneButton.applyConstraints {
-            $0.trailingAnchor.constraint(equalTo: headerContentView.layoutMarginsGuide.trailingAnchor)
-            $0.topAnchor.constraint(equalTo: headerContentView.layoutMarginsGuide.topAnchor)
-            $0.bottomAnchor.constraint(equalTo: headerContentView.layoutMarginsGuide.bottomAnchor)
+            $0.trailingAnchor.constraint(equalTo: headerView.layoutMarginsGuide.trailingAnchor)
+            $0.topAnchor.constraint(equalTo: headerView.layoutMarginsGuide.topAnchor)
+            $0.bottomAnchor.constraint(equalTo: headerView.layoutMarginsGuide.bottomAnchor)
         }
         
         titleView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        let centerX = titleView.centerXAnchor.constraint(equalTo: headerContentView.layoutMarginsGuide.centerXAnchor)
+        let centerX = titleView.centerXAnchor.constraint(equalTo: headerView.layoutMarginsGuide.centerXAnchor)
         centerX.priority = .defaultLow
         titleView.applyConstraints {
-            $0.topAnchor.constraint(equalTo: headerContentView.layoutMarginsGuide.topAnchor)
-            $0.bottomAnchor.constraint(equalTo: headerContentView.layoutMarginsGuide.bottomAnchor)
+            $0.topAnchor.constraint(equalTo: headerView.layoutMarginsGuide.topAnchor)
+            $0.bottomAnchor.constraint(equalTo: headerView.layoutMarginsGuide.bottomAnchor)
             $0.trailingAnchor.constraint(lessThanOrEqualTo: doneButton.leadingAnchor, constant: 10)
-            $0.leadingAnchor.constraint(greaterThanOrEqualTo: headerContentView.layoutMarginsGuide.leadingAnchor)
+            $0.leadingAnchor.constraint(greaterThanOrEqualTo: headerView.layoutMarginsGuide.leadingAnchor)
             centerX
         }
     }
@@ -86,9 +89,12 @@ extension TableViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        
-        cell.textLabel?.text = "Table Cell \(indexPath.row)"
         cell.backgroundColor = .clear
+		let textField = cell.contentView.subviews.lazy.compactMap { $0 as? UITextField }.first ?? UITextField()
+		textField.setContentHuggingPriority(.defaultLow, for: .vertical)
+		textField.text = "Table Cell \(indexPath.row)"
+		cell.contentView.addSubview(textField)
+		textField.extendToSuperviewLayoutMargins()
         
         return cell
     }
