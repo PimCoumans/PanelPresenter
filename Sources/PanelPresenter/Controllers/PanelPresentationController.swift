@@ -5,6 +5,7 @@ extension PanelPresentationController {
 	class PanelContainerView: UIView { }
 	class PanelDimmingView: UIView { }
 	class PanelContainerScrollView: UIScrollView { }
+	class PanelContentView: UIView { }
 	class PanelBackgroundView: UIVisualEffectView { }
 	class PanelHeaderView: UIView { }
 	class PanelHeaderBackgroundView: UIVisualEffectView { }
@@ -34,7 +35,7 @@ public class PanelPresentationController: UIPresentationController {
 	}}
 
 	/// Whether the background of the ``panelHeaderView`` should be fully transparent while content is scrolled to top.
-	/// The default value is `false`.
+	/// The default value is `true`.
 	public var fadeInHeaderBackgroundWhileScrolling: Bool = true { didSet {
 		updateHeaderBackgroundVisibility()
 	}}
@@ -116,8 +117,15 @@ public class PanelPresentationController: UIPresentationController {
 		let scrollView = PanelScrollView()
 		scrollView.alwaysBounceVertical = true
 		scrollView.contentInsetAdjustmentBehavior = .never
-		setupTopCornerMasking(for: scrollView)
+		setUpTopCornerMasking(for: scrollView)
 		return scrollView
+	}()
+
+	private lazy var contentView: UIView = {
+		let view = PanelContentView()
+		view.clipsToBounds = true
+		setUpTopCornerMasking(for: view)
+		return view
 	}()
 
 	/// Header shown when ``showsHeader`` is set to `true`. Add any controls to display above your view’s contents
@@ -125,7 +133,7 @@ public class PanelPresentationController: UIPresentationController {
 		let view = PanelHeaderView()
 		view.translatesAutoresizingMaskIntoConstraints = false
 		view.insetsLayoutMarginsFromSafeArea = false
-		setupTopCornerMasking(for: view)
+		setUpTopCornerMasking(for: view)
 
 		headerHeightConstraint = view.heightAnchor.constraint(equalToConstant: headerHeight)
 		headerHeightConstraint?.isActive = true
@@ -163,7 +171,7 @@ public class PanelPresentationController: UIPresentationController {
 	public private(set) lazy var panelBackgroundView: UIVisualEffectView = {
 		let view = PanelBackgroundView()
 		view.backgroundColor = .secondarySystemBackground
-		setupTopCornerMasking(for: view)
+		setUpTopCornerMasking(for: view)
 		return view
 	}()
 
@@ -310,9 +318,9 @@ extension PanelPresentationController {
 		scrollViewObserver.scrollView = containerScrollView
 		panelContainerView.addGestureRecognizer(containerScrollView.panGestureRecognizer)
 
-		// Let presentedView dictate scrollView contents
-		containerScrollView.addSubview(presentedView)
-		presentedView.applyConstraints {
+		// ContentView holds the presented view and plays nicely with the container scrollView’s content size
+		containerScrollView.addSubview(contentView)
+		contentView.applyConstraints {
 			$0.leadingAnchor.constraint(equalTo: panelContainerView.safeAreaLayoutGuide.leadingAnchor)
 			$0.trailingAnchor.constraint(equalTo: panelContainerView.safeAreaLayoutGuide.trailingAnchor)
 			$0.topAnchor.constraint(equalTo: containerScrollView.contentLayoutGuide.topAnchor)
@@ -321,6 +329,10 @@ extension PanelPresentationController {
 				.withPriority(.defaultHigh)
 			$0.widthAnchor.constraint(equalTo: containerScrollView.contentLayoutGuide.widthAnchor)
 		}
+
+		// presentView should dictate size of contentView
+		contentView.addSubview(presentedView)
+		presentedView.extendToSuperview()
 
 		// Background aligns to top of view and bottom of container
 		panelBackgroundView.applyConstraints {
@@ -365,7 +377,7 @@ extension PanelPresentationController {
 	}
 
 	private func updateHeaderBackgroundVisibility() {
-		guard !fadeInHeaderBackgroundWhileScrolling else {
+		guard fadeInHeaderBackgroundWhileScrolling else {
 			panelHeaderBackgroundView.alpha = 1
 			return
 		}
@@ -415,7 +427,7 @@ extension PanelPresentationController {
 }
 
 extension PanelPresentationController {
-	private func setupTopCornerMasking(for view: UIView) {
+	private func setUpTopCornerMasking(for view: UIView) {
 		view.layer.masksToBounds = true
 		view.layer.cornerCurve = .continuous
 		view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -425,6 +437,7 @@ extension PanelPresentationController {
 		containerScrollView.layer.cornerRadius = cornerRadius
 		panelBackgroundView.layer.cornerRadius = cornerRadius
 		headerView.layer.cornerRadius = cornerRadius
+		contentView.layer.cornerRadius = cornerRadius
 	}
 }
 
