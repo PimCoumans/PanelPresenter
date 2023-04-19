@@ -29,48 +29,48 @@ class SimpleViewController: UIViewController, PanelPresentable {
 Just add your views to your `view`, which will be added to `panelPresenter`’s scroll view. And any navigation-type views can be placed in the `headerView` which will be displayed above your content and will stick to the top of the screen when scrolling.
 
 ```swift
-    private lazy var simpleView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemMint
-        return view
-    }()
-    
-    private lazy var cancelButton: UIButto	n = {
-        let button = UIButton(type: .system)
-        button.setTitle("Cancel", for: .normal)
-        button.addAction(UIAction { [unowned self] _ in
-            self.presentingViewController?.dismiss(animated: true)
-        }, for: .touchUpInside)
-        return button
-    }()
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.tintColor = .black
-        
-        view.addSubview(simpleView)
-        simpleView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            simpleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            simpleView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            simpleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            simpleView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            simpleView.heightAnchor.constraint(equalToConstant: 200),
-        ])
+private lazy var simpleView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .systemMint
+    return view
+}()
 
-        // Use the `panelPresentationController` property to access and configure the presentation controller
-        panelPresentationController?.showsHeaderView = true
-        if let headerView = panelPresentationController?.headerView {
-		    headerView.addSubview(cancelButton)
-            cancelButton.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                cancelButton.leadingAnchor.constraint(equalTo: headerView.layoutMarginsGuide.leadingAnchor),
-                cancelButton.centerYAnchor.constraint(equalTo: headerView.layoutMarginsGuide.centerYAnchor)
-            ])
-        }
+private lazy var cancelButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setTitle("Cancel", for: .normal)
+    button.addAction(UIAction { [unowned self] _ in
+        self.presentingViewController?.dismiss(animated: true)
+    }, for: .touchUpInside)
+    return button
+}()
+
+
+override func viewDidLoad() {
+    super.viewDidLoad()
+    view.tintColor = .black
+    
+    view.addSubview(simpleView)
+    simpleView.translatesAutoresizingMaskIntoConstraints = false
+    
+    NSLayoutConstraint.activate([
+        simpleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        simpleView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        simpleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+        simpleView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        simpleView.heightAnchor.constraint(equalToConstant: 200),
+    ])
+
+    // Use the `panelPresentationController` property to access and configure the presentation controller
+    panelPresentationController?.showsHeaderView = true
+    if let headerView = panelPresentationController?.headerView {
+	    headerView.addSubview(cancelButton)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            cancelButton.leadingAnchor.constraint(equalTo: headerView.layoutMarginsGuide.leadingAnchor),
+            cancelButton.centerYAnchor.constraint(equalTo: headerView.layoutMarginsGuide.centerYAnchor)
+        ])
     }
+}
 ```
 
 ### Presenting any view controller
