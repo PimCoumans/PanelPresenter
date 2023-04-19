@@ -18,7 +18,7 @@ public class PanelPresentationController: UIPresentationController {
 
 	/// Opacity of the dimming view behind the panel
 	public var dimOpacity: CGFloat = 0.45 { didSet {
-		panelDimmingView.backgroundColor = UIColor(white: 0, alpha: dimOpacity)
+		dimmingView.backgroundColor = UIColor(white: 0, alpha: dimOpacity)
 	}}
 
 	/// Whether the ``headerView`` should be shown, defaults to `false`
@@ -105,7 +105,7 @@ public class PanelPresentationController: UIPresentationController {
 	private var keyboardFrame: CGRect?
 	private var keyboardFrameObserver: AnyObject?
 
-	private lazy var panelDimmingView: UIView = {
+	private lazy var dimmingView: UIView = {
 		let view = PanelDimmingView()
 		view.backgroundColor = UIColor(white: 0, alpha: dimOpacity)
 		return view
@@ -138,29 +138,27 @@ public class PanelPresentationController: UIPresentationController {
 		headerHeightConstraint = view.heightAnchor.constraint(equalToConstant: headerHeight)
 		headerHeightConstraint?.isActive = true
 
-		view.addSubview(panelHeaderBackgroundView)
-		panelHeaderBackgroundView.extendToSuperview()
+		view.addSubview(headerBackgroundView)
+		headerBackgroundView.extendToSuperview()
 
-		panelHeaderBackgroundView.contentView.addSubview(panelHeaderBorderView)
-		panelHeaderBorderView.applyConstraints {
-			$0.leadingAnchor.constraint(equalTo: panelHeaderBackgroundView.leadingAnchor)
-			$0.trailingAnchor.constraint(equalTo: panelHeaderBackgroundView.trailingAnchor)
-			$0.bottomAnchor.constraint(equalTo: panelHeaderBackgroundView.bottomAnchor)
+		headerBackgroundView.contentView.addSubview(headerBorderView)
+		headerBorderView.applyConstraints {
+			$0.leadingAnchor.constraint(equalTo: headerBackgroundView.leadingAnchor)
+			$0.trailingAnchor.constraint(equalTo: headerBackgroundView.trailingAnchor)
+			$0.bottomAnchor.constraint(equalTo: headerBackgroundView.bottomAnchor)
 			$0.heightAnchor.constraint(equalToConstant: 1)
 		}
 		return view
 	}()
 
 	/// Background of ``headerView``, can be configured with any ``UIVisualEffect``
-	public private(set) lazy var panelHeaderBackgroundView: UIVisualEffectView = {
-		let view = PanelHeaderBackgroundView()
-		view.effect = UIBlurEffect(style: .regular)
-		return view
+	public private(set) lazy var headerBackgroundView: UIVisualEffectView = {
+		PanelHeaderBackgroundView(effect: UIBlurEffect(style: .regular))
 	}()
 
 	/// Bottom border of ``headerView``, can be used to configure with any color.
 	/// Uses `UIColor.separator` by default
-	public private(set) lazy var panelHeaderBorderView: UIView = {
+	public private(set) lazy var headerBorderView: UIView = {
 		let view = PanelHeaderBorderView()
 		view.backgroundColor = .separator
 		return view
@@ -233,9 +231,9 @@ extension PanelPresentationController {
 		contentScrollViewObserver.scrollView?.layoutIfNeeded()
 
 		presenterTintAdjustingMode = presentingViewController.view.tintAdjustmentMode
-		panelDimmingView.alpha = 0
+		dimmingView.alpha = 0
 		presentingViewController.transitionCoordinator?.animate(alongsideTransition: { _ in
-			self.panelDimmingView.alpha = 1
+			self.dimmingView.alpha = 1
 			if self.shouldAdjustPresenterTintMode {
 				self.presentingViewController.view.tintAdjustmentMode = .dimmed
 			}
@@ -244,7 +242,7 @@ extension PanelPresentationController {
 
 	public override func dismissalTransitionWillBegin() {
 		presentingViewController.transitionCoordinator?.animate(alongsideTransition: { _ in
-			self.panelDimmingView.alpha = 0
+			self.dimmingView.alpha = 0
 			if self.shouldAdjustPresenterTintMode {
 				self.presentingViewController.view.tintAdjustmentMode = self.presenterTintAdjustingMode
 			}
@@ -295,8 +293,8 @@ extension PanelPresentationController {
 		// Extra overlap on the bottom when whole container bounces up
 		let backgroundBottomOutset: CGFloat = 200
 
-		containerView.addSubview(panelDimmingView)
-		panelDimmingView.extendToSuperview()
+		containerView.addSubview(dimmingView)
+		dimmingView.extendToSuperview()
 
 		containerView.addSubview(panelContainerView)
 		panelContainerView.addGestureRecognizer(panGestureRecognizer)
@@ -378,7 +376,7 @@ extension PanelPresentationController {
 
 	private func updateHeaderBackgroundVisibility() {
 		guard fadeInHeaderBackgroundWhileScrolling else {
-			panelHeaderBackgroundView.alpha = 1
+			headerBackgroundView.alpha = 1
 			return
 		}
 		let contentOffset: CGPoint
@@ -388,7 +386,7 @@ extension PanelPresentationController {
 			contentOffset = containerScrollView.contentOffset
 		}
 		let opacity = max(0, min(1, contentOffset.y / 20))
-		panelHeaderBackgroundView.alpha = opacity
+		headerBackgroundView.alpha = opacity
 	}
 
 	/// Checks the viewController’s `panelScrollView` property and configures the panel behavior accordingly
