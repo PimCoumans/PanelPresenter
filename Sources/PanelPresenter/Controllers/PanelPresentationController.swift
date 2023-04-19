@@ -381,8 +381,12 @@ extension PanelPresentationController {
 			panelHeaderBackgroundView.alpha = 1
 			return
 		}
-		let scrollView = activeScrollView
-		let contentOffset = scrollView == containerScrollView ? scrollView.contentOffset : scrollView.relativeContentOffset
+		let contentOffset: CGPoint
+		if let scrollView = panelPresentable?.panelScrollView {
+			contentOffset = scrollView.relativeContentOffset
+		} else {
+			contentOffset = containerScrollView.contentOffset
+		}
 		let opacity = max(0, min(1, contentOffset.y / 20))
 		panelHeaderBackgroundView.alpha = opacity
 	}
@@ -444,10 +448,6 @@ extension PanelPresentationController {
 extension PanelPresentationController {
 	private var panelPresentable: PanelPresentable? {
 		presentedViewController as? PanelPresentable
-	}
-
-	private var activeScrollView: UIScrollView {
-		panelPresentable?.panelScrollView ?? containerScrollView
 	}
 
 	private func containerScrollViewDidUpdate(_ scrollView: UIScrollView) {
@@ -519,6 +519,10 @@ extension PanelPresentationController: UIGestureRecognizerDelegate {
 }
 
 extension PanelPresentationController {
+	@objc func dismiss() {
+		presentingViewController.dismiss(animated: true)
+	}
+
 	private func startScrollSession(at location: CGPoint) {
 		let scrollView: UIScrollView
 		if let contentScrollView = contentScrollViewObserver.scrollView, contentScrollView.isTracking {
@@ -571,6 +575,8 @@ extension PanelPresentationController {
 					return
 				}
 				CFRunLoopPerformBlock(CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue) {
+					// Trick to make sure scrollView doesn’t start scrolling after lifting touch
+					// and panel should just bounce back up
 					scrollView.stopVerticalScrolling()
 					scrollView.isAtTop = true
 				}
@@ -587,11 +593,5 @@ extension PanelPresentationController {
 		default:
 			break
 		}
-	}
-}
-
-extension PanelPresentationController {
-	@objc func dismiss() {
-		presentingViewController.dismiss(animated: true)
 	}
 }
