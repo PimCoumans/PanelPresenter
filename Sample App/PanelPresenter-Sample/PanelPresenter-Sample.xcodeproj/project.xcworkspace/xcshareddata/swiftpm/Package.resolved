@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PimCoumans/ConstraintBuilder",
       "state" : {
-        "revision" : "319a90310e00cd1856cfec471a65f01909a46c0b",
-        "version" : "1.0.4"
+        "revision" : "37126aeb4e2d769f99fd3f694ae67917e36098c9",
+        "version" : "1.3.0"
       }
     }
   ],

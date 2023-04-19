@@ -23,6 +23,8 @@ class StackViewController: UIViewController, PanelPresentable {
 		stackView.alignment = .fill
 		stackView.distribution = .equalSpacing
 		stackView.spacing = 20
+		stackView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+		stackView.setContentHuggingPriority(.defaultLow, for: .vertical)
 		return stackView
 	}()
 	
@@ -48,8 +50,9 @@ class StackViewController: UIViewController, PanelPresentable {
 		
 		view.addSubview(stackView)
 		stackView.extendToSuperviewLayoutMargins()
-		
-		headerContentView.addSubview(buttonStackView)
+
+		panelPresentationController?.showsHeader = true
+		panelPresentationController?.headerView.addSubview(buttonStackView)
 		buttonStackView.extendToSuperviewLayoutMargins()
 		
 		addLabel(initialAlpha: 1)
@@ -110,7 +113,7 @@ private extension StackViewController {
 			"forgot translatesAutoresizingMaskIntoConstraints again",
 			"this is pretty nifty",
 			"yes, okay, well",
-			"can‘t get enough of this"
+			"can’t get enough of this"
 		].randomElement()!
 	}
 	
@@ -146,18 +149,18 @@ private extension StackViewController {
 	}
 	
 	func animateChanges(with animation: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
-		UIView.animate(withDuration: 0.55, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0, options: .allowUserInteraction) {
+		panelPresentationController?.animateChanges {
 			self.stackView.arrangedSubviews.forEach { if !$0.isHidden { $0.alpha = 1 } }
 			animation?()
-			self.panelPresenter.layoutIfNeeded()
 		} completion: { _ in
 			completion?()
 		}
 	}
 	
 	func scrollToBottom() {
-		let bottomOffset = CGPoint(x: 0, y: panelScrollView.contentSize.height - panelScrollView.bounds.height + panelScrollView.adjustedContentInset.bottom)
-		panelScrollView.setContentOffset(bottomOffset, animated: true)
+		guard let scrollView = panelPresentationController?.containerScrollView else { return }
+		let bottomOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.height + scrollView.adjustedContentInset.bottom)
+		scrollView.setContentOffset(bottomOffset, animated: true)
 	}
 	
 	func addLabel(initialAlpha: CGFloat = 0) {
@@ -173,7 +176,7 @@ private extension StackViewController {
 		var randomWord = lastRandomWord
 		
 		if stackView.arrangedSubviews.count == maxViewCount {
-			randomWord = "let‘s not get carried away"
+			randomWord = "let’s not get carried away"
 		}
 		
 		while randomWord == lastRandomWord {
