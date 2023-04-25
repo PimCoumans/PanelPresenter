@@ -41,7 +41,7 @@ class SimpleViewController: UIViewController, PanelPresentable {
 		
 		view.addSubview(simpleView)
 		simpleView.extendToSuperviewSafeArea()
-		simpleView.heightAnchor.constraint(equalToConstant: 400).isActive = true
+		simpleView.heightAnchor.constraint(equalToConstant: 200).isActive = true
 
 		panelPresentationController?.showsHeader = true
 		if let panelHeaderView = panelPresentationController?.headerView {

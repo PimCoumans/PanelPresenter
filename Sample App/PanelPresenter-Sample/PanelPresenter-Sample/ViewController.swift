@@ -56,7 +56,6 @@ class ViewController: UIViewController {
 		case stack
 		case smallTableView
 		case bigTableView
-		case newSimple
 		case resizingView
 		case bigResizingView
 	}
@@ -100,7 +99,6 @@ class ViewController: UIViewController {
 		case .stack: viewController = StackViewController()
 		case .smallTableView: viewController = TableViewController()
 		case .bigTableView: viewController = TableViewController(cellCount: 86)
-		case .newSimple: viewController = NewSimpleViewController()
 		case .resizingView:
 			viewController = ResizingViewController(cellCount: 8)
 			let panelPresenter = PanelPresenter(viewController: viewController)
