@@ -508,7 +508,12 @@ extension PanelPresentationController: UIGestureRecognizerDelegate {
 	}
 
 	public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-		return gestureRecognizer == panGestureRecognizer
+		guard gestureRecognizer == panGestureRecognizer &&
+				(otherGestureRecognizer == containerScrollView.panGestureRecognizer ||
+				 otherGestureRecognizer == contentScrollViewObserver.scrollView) else {
+			return false
+		}
+		return true
 	}
 
 	public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
