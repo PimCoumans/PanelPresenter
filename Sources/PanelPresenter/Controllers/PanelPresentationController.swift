@@ -29,8 +29,8 @@ public class PanelPresentationController: UIPresentationController {
 
 	/// Height of the ``panelHeaderView``
 	public var headerHeight: CGFloat = 50 { didSet {
-		guard isViewLoaded else { return }
 		headerHeightConstraint?.constant = headerHeight
+		guard isViewLoaded else { return }
 		presentedViewController.additionalSafeAreaInsets.top = headerHeight
 	}}
 
