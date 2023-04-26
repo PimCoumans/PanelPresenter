@@ -56,7 +56,7 @@ public class PanelPresentationController: UIPresentationController {
 	/// The default value is `false`. Setting to `true` disables auto-resizing and keeps the panel’s top below ``topInset``.
 	public var extendsToFullHeight: Bool = false { didSet {
 		guard isViewLoaded else { return }
-		updateTopInsetIfNeeded()
+		containerScrollViewDidUpdate(containerScrollView)
 	}}
 
 	/// Whether the tint mode of the presenting view controller’s view should be changed when presented.
@@ -357,7 +357,6 @@ extension PanelPresentationController {
 	}
 
 	private func updateTopInsetIfNeeded() {
-		let topInset = extendsToFullHeight ? 0 : topInset
 		guard containerScrollViewTopConstraint?.constant != topInset else {
 			return
 		}
@@ -380,12 +379,13 @@ extension PanelPresentationController {
 			return
 		}
 		let contentOffset: CGPoint
-		if let scrollView = panelPresentable?.panelScrollView {
+		if let scrollView = panelPresentable?.panelScrollView, scrollView.contentExceedsBounds {
 			contentOffset = scrollView.relativeContentOffset
 		} else {
 			contentOffset = containerScrollView.contentOffset
 		}
 		let opacity = max(0, min(1, contentOffset.y / 20))
+		print(opacity)
 		headerBackgroundView.alpha = opacity
 	}
 
@@ -451,7 +451,7 @@ extension PanelPresentationController {
 	private func containerScrollViewDidUpdate(_ scrollView: UIScrollView) {
 		let scrollViewHeight = scrollView.frame.height
 		let contentHeight = scrollView.contentSize.height
-		let topInset = max(0, scrollViewHeight - contentHeight)
+		let topInset = extendsToFullHeight ? 0 : max(0, scrollViewHeight - contentHeight)
 		let contentInset = UIEdgeInsets(
 			top: topInset,
 			left: 0,
