@@ -53,6 +53,8 @@ class ResizingViewController: UIViewController, PanelPresentable {
 		return label
 	}()
 
+	private lazy var fixedButton: UIButton = compatibleButton(title: "Fixed", selector: #selector(didPressFixedButton))
+
 	private lazy var doneButton: UIButton = compatibleButton(title: "Done", selector: #selector(didPressDoneButton))
 
 	required init?(coder: NSCoder) {
@@ -97,12 +99,27 @@ class ResizingViewController: UIViewController, PanelPresentable {
 		super.viewDidLoad()
 		
 		panelPresentationController?.showsHeader = true
-		let titleLabel = UILabel()
-		titleLabel.text = "Tap anywhere to toggle content"
-		titleLabel.font = .preferredFont(forTextStyle: .headline)
-		titleLabel.textAlignment = .center
-		panelPresentationController?.headerView.addSubview(titleLabel)
-		titleLabel.extendToSuperviewLayoutMargins()
+		if let headerView = panelPresentationController?.headerView {
+			headerView.addSubview(fixedButton)
+			fixedButton.setContentHuggingPriority(.required, for: .horizontal)
+			fixedButton.applyConstraints {
+				$0.trailingAnchor.constraint(equalTo: headerView.layoutMarginsGuide.trailingAnchor)
+				$0.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+				$0.topAnchor.constraint(equalTo: headerView.layoutMarginsGuide.topAnchor)
+				$0.bottomAnchor.constraint(equalTo: headerView.layoutMarginsGuide.bottomAnchor)
+			}
+			let titleLabel = UILabel()
+			titleLabel.text = "Tap anywhere to toggle content"
+			titleLabel.font = .preferredFont(forTextStyle: .headline)
+			titleLabel.textAlignment = .center
+			headerView.addSubview(titleLabel)
+			titleLabel.applyConstraints {
+				$0.leadingAnchor.constraint(equalTo: headerView.layoutMarginsGuide.leadingAnchor)
+				$0.trailingAnchor.constraint(equalTo: fixedButton.leadingAnchor)
+				$0.topAnchor.constraint(equalTo: headerView.layoutMarginsGuide.topAnchor)
+				$0.bottomAnchor.constraint(equalTo: headerView.layoutMarginsGuide.bottomAnchor)
+			}
+		}
 
 		view.addSubview(tableView)
 		tableView.backgroundColor = .clear
@@ -114,6 +131,11 @@ class ResizingViewController: UIViewController, PanelPresentable {
 extension ResizingViewController {
 	@objc func didPressDoneButton(button: UIButton) {
 		presentingViewController?.dismiss(animated: true)
+	}
+	@objc func didPressFixedButton(button: UIButton) {
+		panelPresentationController?.animateChanges {
+			self.panelPresentationController?.extendsToFullHeight.toggle()
+		}
 	}
 }
 
