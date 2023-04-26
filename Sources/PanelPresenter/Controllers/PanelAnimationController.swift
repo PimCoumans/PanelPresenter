@@ -3,6 +3,7 @@ import UIKit
 /// Handles the
 class PanelAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
 	var dismissVelocity: CGFloat = 0
+	var shouldPresentInFullHeight: Bool = false
 
 	private enum Transition {
 		case presenting
@@ -46,6 +47,7 @@ class PanelAnimationController: NSObject, UIViewControllerAnimatedTransitioning 
 		if let presentationController = viewController?.presentationController as? PanelPresentationController {
 			containerView = presentationController.panelContainerView
 			dismissVelocity = presentationController.dismissVelocity
+			shouldPresentInFullHeight = presentationController.extendsToFullHeight
 		} else {
 			containerView = transitionContext.containerView
 		}
@@ -72,11 +74,16 @@ class PanelAnimationController: NSObject, UIViewControllerAnimatedTransitioning 
 						context.completeTransition(true)
 					}
 			} else {
-				let viewHeight = view.systemLayoutSizeFitting(
-					context.containerView.bounds.size,
-					withHorizontalFittingPriority: .defaultHigh,
-					verticalFittingPriority: .defaultHigh
-				).height + context.containerView.safeAreaInsets.bottom
+				let viewHeight: CGFloat
+				if shouldPresentInFullHeight {
+					viewHeight = context.containerView.bounds.height
+				} else {
+					viewHeight = view.systemLayoutSizeFitting(
+						context.containerView.bounds.size,
+						withHorizontalFittingPriority: .defaultHigh,
+						verticalFittingPriority: .defaultHigh
+					).height + context.containerView.safeAreaInsets.bottom
+				}
 
 				containerView.transform = CGAffineTransform(translationX: 0, y: viewHeight)
 				UIView.animate(
@@ -100,8 +107,9 @@ class PanelAnimationController: NSObject, UIViewControllerAnimatedTransitioning 
 			return
 		}
 		let duration = transitionDuration(using: context)
+		let viewHeight = shouldPresentInFullHeight ? containerView.bounds.height : view.bounds.height
 		if context.isAnimated {
-			let offset = view.bounds.height - containerView.transform.ty
+			let offset = viewHeight - containerView.transform.ty
 			let options: UIView.AnimationOptions = dismissVelocity > 5 ? .curveLinear : .curveEaseIn
 			let dismissDuration = min(duration, offset / dismissVelocity)
 			UIView.animate(
@@ -111,7 +119,7 @@ class PanelAnimationController: NSObject, UIViewControllerAnimatedTransitioning 
 					if self.shouldCrossfade {
 						containerView.alpha = 0
 					} else {
-						containerView.transform.ty = view.bounds.height
+						containerView.transform.ty = viewHeight
 					}
 				} completion: { finished in
 					context.completeTransition(true)
