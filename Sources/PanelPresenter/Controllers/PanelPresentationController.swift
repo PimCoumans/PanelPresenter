@@ -56,6 +56,7 @@ public class PanelPresentationController: UIPresentationController {
 	/// The default value is `false`. Setting to `true` disables auto-resizing and keeps the panel’s top below ``topInset``.
 	public var extendsToFullHeight: Bool = false { didSet {
 		guard isViewLoaded else { return }
+		updateContentScrollViewIfNeeded()
 		containerScrollViewDidUpdate(containerScrollView)
 	}}
 
