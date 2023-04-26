@@ -385,7 +385,6 @@ extension PanelPresentationController {
 			contentOffset = containerScrollView.contentOffset
 		}
 		let opacity = max(0, min(1, contentOffset.y / 20))
-		print(opacity)
 		headerBackgroundView.alpha = opacity
 	}
 
