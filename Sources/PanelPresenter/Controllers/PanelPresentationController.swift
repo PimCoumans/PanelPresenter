@@ -58,6 +58,10 @@ public class PanelPresentationController: UIPresentationController {
 		guard isViewLoaded else { return }
 		updateContentScrollViewIfNeeded()
 		containerScrollViewDidUpdate(containerScrollView)
+		// Nudge the insets a little to make sure the safeAreaInsets update correctly
+		let bottom = presentedViewController.additionalSafeAreaInsets.bottom
+		presentedViewController.additionalSafeAreaInsets.bottom += 1
+		presentedViewController.additionalSafeAreaInsets.bottom = bottom
 	}}
 
 	/// Whether the tint mode of the presenting view controller’s view should be changed when presented.
