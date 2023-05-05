@@ -4,7 +4,7 @@ import ConstraintBuilder
 extension PanelPresentationController {
 	class PanelContainerView: UIView { }
 	class PanelDimmingView: UIView { }
-	class PanelContainerScrollView: UIScrollView { }
+	class PanelContainerScrollView: PanelScrollView { }
 	class PanelContentView: UIView { }
 	class PanelBackgroundView: UIVisualEffectView { }
 	class PanelHeaderView: UIView { }
@@ -119,7 +119,9 @@ public class PanelPresentationController: UIPresentationController {
 
 	/// Main scrollView your view is placed in
 	public private(set) lazy var containerScrollView: UIScrollView = {
-		let scrollView = PanelScrollView()
+		let scrollView = PanelContainerScrollView()
+		scrollView.canCancelControlContentTouches = true
+		scrollView.delaysContentTouches = false
 		scrollView.alwaysBounceVertical = true
 		scrollView.contentInsetAdjustmentBehavior = .never
 		setUpTopCornerMasking(for: scrollView)
@@ -265,8 +267,6 @@ extension PanelPresentationController {
 			self?.contentScrollViewDidUpdate(scrollView)
 		}
 		panGestureRecognizer.delegate = self
-		panGestureRecognizer.delaysTouchesBegan = true
-		panGestureRecognizer.delaysTouchesEnded = false
 		dismissTapGestureRecognizer.delegate = self
 
 		keyboardFrameObserver = NotificationCenter.default.addObserver(
