@@ -26,6 +26,7 @@ import UIKit
 ///         // .. set auto layout constraints
 ///     }
 /// }
+@MainActor
 public protocol PanelPresentable: UIViewController {
 	/// Return an instance of `PanelPresenter` that manages the view controller’s presentation
 	var panelPresenter: PanelPresenter? { get }

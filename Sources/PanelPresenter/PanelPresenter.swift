@@ -1,6 +1,7 @@
 import UIKit
 import ConstraintBuilder
 
+@MainActor
 public final class PanelPresenter: NSObject {
 	/// Set the view controller to apply panel behavior to
 	public weak var viewController: UIViewController? { didSet {
