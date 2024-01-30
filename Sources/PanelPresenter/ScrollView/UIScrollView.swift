@@ -17,7 +17,7 @@ extension UIScrollView {
 		}
 	}
 	
-	private var pointPrecision: CGFloat { 1 / UIScreen.main.scale }
+	private var pointPrecision: CGFloat { 3 }
 	
 	/// Content sits at top offset or is scroll-bouncing at top
 	public var isAtTop: Bool {
