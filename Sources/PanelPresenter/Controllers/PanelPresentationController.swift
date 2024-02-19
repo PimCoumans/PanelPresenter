@@ -403,15 +403,13 @@ extension PanelPresentationController {
 		}
 		scrollView.contentInsetAdjustmentBehavior = .always
 		contentScrollViewObserver.scrollView = scrollView
-		contentHeightConstraint = presentedViewController.view.heightAnchor
+		contentHeightConstraint = contentView.heightAnchor
 			.constraint(lessThanOrEqualTo: containerScrollView.heightAnchor)
+
+		// Create constraint that can be updated with the contentScrollView’s content height
 		contentScrollViewHeightConstraint = scrollView.safeAreaLayoutGuide.heightAnchor
-			.constraint(equalToConstant: 10)
+			.constraint(equalToConstant: scrollView.contentSize.height)
 			.withPriority(.defaultHigh)
-		NSLayoutConstraint.build {
-			contentHeightConstraint!
-			contentScrollViewHeightConstraint!
-		}
 	}
 
 	private func updateKeyboardBottomInsetIfNeeded() {
@@ -478,10 +476,12 @@ extension PanelPresentationController {
 
 	private func contentScrollViewDidUpdate(_ scrollView: UIScrollView) {
 		if scrollView.contentExceedsBounds {
-			scrollView.isScrollEnabled = true
+			// Setting `isScrollEnabled` directly changes the contentSize
+			// Potentially leading to an infinite back and forth here
+			scrollView.panGestureRecognizer.isEnabled = true
 			containerScrollView.alwaysBounceVertical = false
 		} else {
-			scrollView.isScrollEnabled = false
+			scrollView.panGestureRecognizer.isEnabled = false
 			containerScrollView.alwaysBounceVertical = true
 		}
 		contentScrollViewHeightConstraint?.constant = scrollView.contentSize.height
